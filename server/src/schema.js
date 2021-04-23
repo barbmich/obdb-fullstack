@@ -1,11 +1,14 @@
 const { gql } = require("apollo-server");
 
 const typeDefs = gql`
+  scalar Date
+
   type User {
     id: ID!
     name: String!
     email: String
     likes: [Brewery!]
+    createdAt: Date
   }
 
   type Brewery {
@@ -19,10 +22,7 @@ const typeDefs = gql`
 
   type Address {
     street: String
-    address_2: String
-    address_3: String
     city: String
-    county_province: String
     state: String
     postal_code: String
     country: String
@@ -37,6 +37,8 @@ const typeDefs = gql`
     phone: String
     website_url: String
   }
+
+  # type Response
 
   type Query {
     breweries: [Brewery]!
