@@ -6,3 +6,23 @@ module.exports.Query = `
     user(id: Int!): User!
   }
 `;
+
+module.exports.queryResolvers = {
+  Query: {
+    users: () => {
+      return database.users;
+    },
+    user: (_, { id }) => {
+      const user = database.users.find((user) => user.id === id);
+      return user;
+    },
+    breweries: async (_, __, { dataSources }) => {
+      const allBreweries = await dataSources.breweryAPI.getAllBreweries();
+      return allBreweries;
+    },
+    brewery: async (_, { id }, { dataSources }) => {
+      const brewery = await dataSources.breweryAPI.getSingleBrewery({ id });
+      return brewery;
+    },
+  },
+};

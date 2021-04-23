@@ -1,4 +1,4 @@
-const Brewery = `
+module.exports.Brewery = `
   type Brewery {
     id: ID!
     name: String!
@@ -9,7 +9,7 @@ const Brewery = `
   }
 `;
 
-const Address = `
+module.exports.Address = `
   type Address {
     street: String
     city: String
@@ -19,21 +19,21 @@ const Address = `
   }
 `;
 
-const Coordinates = `
+module.exports.Coordinates = `
   type Coordinates {
     longitude: String
     latitude: String
   }
 `;
 
-const Contacts = `
+module.exports.Contacts = `
   type Contacts {
     phone: String
     website_url: String
   }
 `;
 
-const breweryResolvers = {
+module.exports.breweryResolvers = {
   Brewery: {
     address(parent) {
       return {
@@ -52,5 +52,3 @@ const breweryResolvers = {
     },
   },
 };
-
-module.exports = { Brewery, Address, Coordinates, Contacts, breweryResolvers };

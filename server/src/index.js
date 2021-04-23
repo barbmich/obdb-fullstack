@@ -1,8 +1,6 @@
 const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server");
-const resolvers = require("./resolvers");
 const BreweryAPI = require("./datasources/brewery");
-const typeDefs = require("./schema");
-const { Query } = require("./schema/query");
+const { Query, queryResolvers } = require("./schema/query");
 const { User, userResolvers } = require("./schema/user");
 const {
   Brewery,
@@ -11,12 +9,17 @@ const {
   Contacts,
   breweryResolvers,
 } = require("./schema/brewery");
-const { Date } = require("./schema/date");
+const { Date, dateResolvers } = require("./schema/date");
 const { merge } = require("lodash");
 
 const schema = makeExecutableSchema({
   typeDefs: [Query, Date, User, Brewery, Address, Coordinates, Contacts],
-  resolvers: merge(resolvers, userResolvers, breweryResolvers),
+  resolvers: merge(
+    queryResolvers,
+    dateResolvers,
+    userResolvers,
+    breweryResolvers
+  ),
 });
 
 const server = new ApolloServer({

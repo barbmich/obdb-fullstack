@@ -1,4 +1,4 @@
-const database = require("../data");
+const database = require("../data/data");
 
 module.exports.User = `
   type User {
