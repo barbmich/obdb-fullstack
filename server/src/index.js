@@ -47,8 +47,8 @@ const server = new ApolloServer({
     userAPI: new UserAPI(),
     breweryAPI: new BreweryAPI(),
   }),
-  context: async ({ req }) => {
-    // console.log(req.headers);
+  context: async ({ req, res }) => {
+    return { req, res };
   },
   playground: {
     settings: {

@@ -1,6 +1,6 @@
 const { ApolloError } = require("apollo-server-core");
 const { compare } = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { createAccessToken, createRefreshToken } = require("../utils/utils");
 
 module.exports.Mutation = `
   type Mutation {
@@ -27,7 +27,7 @@ module.exports.mutationResolvers = {
       // return newUser;
       return true;
     },
-    login: async (_, { email, password }, { dataSources }) => {
+    login: async (_, { email, password }, { req, res, dataSources }) => {
       const user = await dataSources.userAPI.getUserByEmail({ email });
       if (!user) {
         throw new ApolloError("Invalid credentials");
@@ -36,10 +36,12 @@ module.exports.mutationResolvers = {
       if (!validPassword) {
         throw new ApolloError("Invalid credentials");
       }
+
+      res.cookie("refresh-token", createRefreshToken(user), {
+        httpOnly: true,
+      });
       return {
-        accessToken: jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-          expiresIn: "15m",
-        }),
+        accessToken: createAccessToken(user),
       };
     },
     addLike: async (_, { id, brewery_id }, { dataSources }) => {

@@ -17,6 +17,7 @@
     "apollo-server": "^2.23.0",
     "apollo-server-errors": "^2.5.0",
     "apollo-server-testing": "^2.23.0",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",
     "jsonwebtoken": "^8.5.1",
