@@ -1,19 +1,19 @@
 module.exports.Query = `
   type Query {
-    breweries: [Brewery]!
-    brewery(id: Int!): Brewery!
-    users: [User]!
-    user(id: Int!): User!
+    breweries: [Brewery!]
+    brewery(id: Int!): Brewery
+    users: [User!]
+    user(id: Int!): User
   }
 `;
 
 module.exports.queryResolvers = {
   Query: {
-    users: () => {
-      return database.users;
+    users: (_, __, { dataSources }) => {
+      return dataSources.userAPI.getAllUsers();
     },
-    user: (_, { id }) => {
-      const user = database.users.find((user) => user.id === id);
+    user: (_, { id }, { dataSources }) => {
+      const user = dataSources.userAPI.getUser({ id });
       return user;
     },
     breweries: async (_, __, { dataSources }) => {

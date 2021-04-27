@@ -1,7 +1,14 @@
-const { ApolloServer, gql, makeExecutableSchema } = require("apollo-server");
+const { ApolloServer, makeExecutableSchema } = require("apollo-server");
+const { merge } = require("lodash");
 const BreweryAPI = require("./datasources/brewery");
+const UserAPI = require("./datasources/user");
 const { Query, queryResolvers } = require("./schema/query");
-const { User, userResolvers } = require("./schema/user");
+const {
+  User,
+  userResolvers,
+  UserResponse,
+  LoginResponse,
+} = require("./schema/user");
 const {
   Brewery,
   Address,
@@ -10,12 +17,24 @@ const {
   breweryResolvers,
 } = require("./schema/brewery");
 const { Date, dateResolvers } = require("./schema/date");
-const { merge } = require("lodash");
+const { Mutation, mutationResolvers } = require("./schema/mutation");
 
 const schema = makeExecutableSchema({
-  typeDefs: [Query, Date, User, Brewery, Address, Coordinates, Contacts],
+  typeDefs: [
+    Query,
+    Mutation,
+    Date,
+    User,
+    UserResponse,
+    LoginResponse,
+    Brewery,
+    Address,
+    Coordinates,
+    Contacts,
+  ],
   resolvers: merge(
     queryResolvers,
+    mutationResolvers,
     dateResolvers,
     userResolvers,
     breweryResolvers
@@ -25,8 +44,17 @@ const schema = makeExecutableSchema({
 const server = new ApolloServer({
   schema,
   dataSources: () => ({
+    userAPI: new UserAPI(),
     breweryAPI: new BreweryAPI(),
   }),
+  context: async ({ req }) => {
+    // console.log(req.headers);
+  },
+  playground: {
+    settings: {
+      "schema.polling.enable": false,
+    },
+  },
 });
 
 server.listen().then(({ url }) => {
