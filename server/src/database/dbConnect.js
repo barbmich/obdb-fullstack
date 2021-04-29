@@ -8,6 +8,4 @@ const db = new Pool({
   password: process.env.DB_PASS,
 });
 
-db.connect();
-
 module.exports = db;

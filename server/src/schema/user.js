@@ -1,6 +1,4 @@
-const database = require("../data/data");
-
-module.exports.User = `
+const User = `
   type User {
     id: ID!
     name: String!
@@ -11,7 +9,7 @@ module.exports.User = `
   }
 `;
 
-module.exports.UserResponse = `
+const UserResponse = `
 type UserResponse {
   id: ID!
   name: String!
@@ -19,17 +17,24 @@ type UserResponse {
   likes: [Brewery!]!
 }`;
 
-module.exports.LoginResponse = `
+const LoginResponse = `
   type LoginResponse {
     accessToken: String
   }
 `;
 
-module.exports.userResolvers = {
+const userResolvers = {
   User: {
     async likes(parent, _, { dataSources }) {
       const ids = parent.likes;
       return dataSources.breweryAPI.getBreweriesById({ ids });
     },
   },
+};
+
+module.exports = {
+  User,
+  UserResponse,
+  LoginResponse,
+  userResolvers,
 };

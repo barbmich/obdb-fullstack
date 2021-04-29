@@ -6,7 +6,7 @@ const {
   getUserId,
 } = require("../utils/auth");
 
-module.exports.Mutation = `
+const Mutation = `
   type Mutation {
     login(email: String!, password: String!): LoginResponse
     register(name: String!, email: String!, password: String!): Boolean
@@ -15,7 +15,7 @@ module.exports.Mutation = `
   }
 `;
 
-module.exports.mutationResolvers = {
+const mutationResolvers = {
   Mutation: {
     register: async (_, { name, email, password }, { dataSources }) => {
       const existingUser = await dataSources.userAPI.getUserByEmail({ email });
@@ -69,4 +69,9 @@ module.exports.mutationResolvers = {
       return true;
     },
   },
+};
+
+module.exports = {
+  Mutation,
+  mutationResolvers,
 };

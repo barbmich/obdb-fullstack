@@ -9,15 +9,38 @@ class BreweryAPI extends RESTDataSource {
   // update to accept pagination and nr of breweries to display
   // by default it displays the first 20 breweries
   async getAllBreweries() {
-    return this.get("breweries");
+    const res = await this.get("breweries");
+    return res.map((brewery) => this.breweryReducer(brewery));
   }
 
   async getSingleBrewery({ id }) {
-    return this.get(`breweries/${id}`);
+    const res = await this.get(`breweries/${id}`);
+    return this.breweryReducer(res);
   }
 
-  getBreweriesById({ ids }) {
-    return Promise.all(ids.map((id) => this.getSingleBrewery({ id })));
+  async getBreweriesById({ ids }) {
+    const res = await Promise.all(
+      ids.map((id) => this.getSingleBrewery({ id }))
+    );
+    return res;
+  }
+
+  // eases testing and refactors keys to pascalCase
+  breweryReducer(brewery) {
+    return {
+      id: brewery.id,
+      name: brewery.name,
+      breweryType: brewery.brewery_type,
+      street: brewery.street,
+      city: brewery.city,
+      state: brewery.state,
+      postalCode: brewery.postal_code,
+      country: brewery.country,
+      longitude: brewery.longitude,
+      latitude: brewery.latitude,
+      phone: brewery.phone,
+      website: brewery.website_url,
+    };
   }
 }
 

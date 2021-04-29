@@ -1,9 +1,9 @@
 const { dateScalar } = require("../scalars/scalars");
 
-module.exports.Date = `
+exports.Date = `
   scalar Date
 `;
 
-module.exports.dateResolvers = {
+exports.dateResolvers = {
   Date: dateScalar,
 };

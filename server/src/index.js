@@ -1,44 +1,13 @@
 const { ApolloServer, makeExecutableSchema } = require("apollo-server");
-const { merge } = require("lodash");
 const BreweryAPI = require("./datasources/brewery");
 const UserAPI = require("./datasources/user");
-const { Query, queryResolvers } = require("./schema/query");
-const {
-  User,
-  userResolvers,
-  UserResponse,
-  LoginResponse,
-} = require("./schema/user");
-const {
-  Brewery,
-  Address,
-  Coordinates,
-  Contacts,
-  breweryResolvers,
-} = require("./schema/brewery");
-const { Date, dateResolvers } = require("./schema/date");
-const { Mutation, mutationResolvers } = require("./schema/mutation");
+
+const typeDefs = require("./typedefs");
+const resolvers = require("./resolvers");
 
 const schema = makeExecutableSchema({
-  typeDefs: [
-    Query,
-    Mutation,
-    Date,
-    User,
-    UserResponse,
-    LoginResponse,
-    Brewery,
-    Address,
-    Coordinates,
-    Contacts,
-  ],
-  resolvers: merge(
-    queryResolvers,
-    mutationResolvers,
-    dateResolvers,
-    userResolvers,
-    breweryResolvers
-  ),
+  typeDefs,
+  resolvers,
 });
 
 const server = new ApolloServer({
@@ -57,6 +26,11 @@ const server = new ApolloServer({
   },
 });
 
-server.listen().then(({ url }) => {
-  console.log(`🚀  Server ready at ${url}`);
-});
+server
+  .listen()
+  .then(({ url }) => {
+    console.log(`🚀  Server ready at ${url}`);
+  })
+  .catch((err) => console.log(err));
+
+module.exports = server;
