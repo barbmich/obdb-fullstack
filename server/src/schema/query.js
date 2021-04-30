@@ -10,11 +10,14 @@ const Query = `
 
 const queryResolvers = {
   Query: {
-    users: (_, __, { dataSources }) => {
-      return dataSources.userAPI.getAllUsers();
+    users: async (_, __, { dataSources }) => {
+      const users = await dataSources.userAPI.getAllUsers();
+      return users;
     },
-    user: (_, { id }, { dataSources }) => {
-      const user = dataSources.userAPI.getUser({ id });
+    user: async (_, { id }, { dataSources }) => {
+      const user = await dataSources.userAPI.getUser({ id });
+      const likes = await dataSources.userAPI.getUserLikes({ id: user.id });
+      user.likes = likes;
       return user;
     },
     breweries: async (_, __, { dataSources }) => {

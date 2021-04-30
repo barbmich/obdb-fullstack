@@ -36,3 +36,7 @@ exports.startTestServer = async (server) => {
     graphql: executeOperation,
   };
 };
+
+describe("test", () => {
+  it("should pass", () => {});
+});

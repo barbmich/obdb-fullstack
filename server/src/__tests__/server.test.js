@@ -6,4 +6,6 @@ const resolvers = require("../resolvers");
 const UserAPI = require("../datasources/user");
 const BreweryAPI = require("../datasources/brewery");
 
-// test("something", () => {});
+describe("something", () => {
+  it("should pass", () => {});
+});
