@@ -1,45 +1,10 @@
 import { RESTDataSource } from "apollo-datasource-rest";
-import { Brewery } from "src/entity/Brewery";
+import { Brewery } from "../types/Brewery";
+import { IArgId, IArgIds } from "src/types/IArg";
+import { IFetchedBrewery } from "src/types/IFetchedBrewery";
+import { ITransformedBrewery } from "src/types/ITransformedBrewery";
 
-interface IArgsId {
-  id: number;
-}
-
-interface IArgsIds {
-  ids: number[];
-}
-
-interface IFetchedBrewery {
-  id: number;
-  name: string;
-  brewery_type: string | null;
-  street: string | null;
-  city: string | null;
-  state: string | null;
-  postal_code: string | null;
-  country: string | null;
-  longitude: string | null;
-  latitude: string | null;
-  phone: string | null;
-  website_url: string | null;
-}
-
-interface ITransformedBrewery {
-  id: number;
-  name: string;
-  breweryType: string | null;
-  street: string | null;
-  city: string | null;
-  state: string | null;
-  postalCode: string | null;
-  country: string | null;
-  longitude: string | null;
-  latitude: string | null;
-  phone: string | null;
-  website: string | null;
-}
-
-class BreweryAPI extends RESTDataSource {
+export class BreweryAPI extends RESTDataSource {
   constructor() {
     super();
     this.baseURL = "https://api.openbrewerydb.org/";
@@ -51,12 +16,12 @@ class BreweryAPI extends RESTDataSource {
     return res.map((brewery: IFetchedBrewery) => this.breweryReducer(brewery));
   }
 
-  async getSingleBrewery({ id }: IArgsId): Promise<ITransformedBrewery> {
+  async getSingleBrewery({ id }: IArgId): Promise<ITransformedBrewery> {
     const res = await this.get(`breweries/${id}`);
     return this.breweryReducer(res);
   }
 
-  async getBreweriesById({ ids }: IArgsIds): Promise<ITransformedBrewery[]> {
+  async getBreweriesById({ ids }: IArgIds): Promise<ITransformedBrewery[]> {
     const res = await Promise.all(
       ids.map((id) => this.getSingleBrewery({ id }))
     );
@@ -81,5 +46,3 @@ class BreweryAPI extends RESTDataSource {
     };
   }
 }
-
-module.exports = BreweryAPI;

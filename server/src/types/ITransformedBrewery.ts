@@ -1,0 +1,14 @@
+export interface ITransformedBrewery {
+  id: number;
+  name: string;
+  breweryType: string;
+  street: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  longitude: string;
+  latitude: string;
+  phone: string;
+  website: string;
+}

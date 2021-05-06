@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from "type-graphql";
 
 @ObjectType()
-class Address {
+export class Address {
   @Field({ nullable: true })
   street: string;
 
@@ -19,7 +19,7 @@ class Address {
 }
 
 @ObjectType()
-class Coordinates {
+export class Coordinates {
   @Field({ nullable: true })
   longitude: string;
 
@@ -28,7 +28,7 @@ class Coordinates {
 }
 
 @ObjectType()
-class Contacts {
+export class Contacts {
   @Field({ nullable: true })
   phone: string;
 

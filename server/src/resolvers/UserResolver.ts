@@ -12,7 +12,7 @@ export class UserResolver {
   }
 
   @Query(() => [User], { nullable: true })
-  async allUsers(): Promise<User[] | []> {
+  async allUsers(): Promise<User[]> {
     return User.find();
   }
 
