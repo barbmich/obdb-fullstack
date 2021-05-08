@@ -10,6 +10,7 @@ import {
 } from "type-graphql";
 import { Brewery } from "src/types/Brewery";
 import { Like } from "src/entity/Like";
+import { Context } from "src/types/Context";
 
 @Resolver()
 export class UserResolver {
@@ -40,7 +41,7 @@ export class UserSubFieldsResolver {
   @FieldResolver()
   async likes(
     @Root() user: User,
-    @Ctx() { dataSources }: any
+    @Ctx() { dataSources }: Context
   ): Promise<Brewery[]> {
     const likes = await dataSources.userAPI.getUserLikes({ id: user.id });
     const ids = likes.map((like: Like) => like.brewery_id);

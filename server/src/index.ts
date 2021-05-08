@@ -1,40 +1,33 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
 import { buildSchema } from "type-graphql";
-import { UserResolver, UserSubFieldsResolver } from "./resolvers/UserResolver";
 import { createConnection, getConnectionOptions } from "typeorm";
-import { Brewery } from "./types/Brewery";
-import {
-  BreweryResolver,
-  BrewerySubFieldsResolver,
-} from "./resolvers/BreweryResolver";
 import { BreweryAPI } from "./datasources/BreweryDataSource";
 import { UserAPI } from "./datasources/UserDataSource";
-import { AuthResolver } from "./resolvers/AuthResolver";
+import { resolvers } from "./resolvers/resolvers";
+import { DataSources } from "apollo-server-core/dist/graphqlOptions";
+import { Context } from "./types/Context";
+import { IDataSources } from "./types/IDataSources";
 
 async function bootstrap() {
   try {
     const options = await getConnectionOptions("development");
-    await createConnection({ ...options, name: "default" });
+    await createConnection({
+      ...options,
+      name: "default",
+    });
 
     const schema = await buildSchema({
-      resolvers: [
-        UserResolver,
-        UserSubFieldsResolver,
-        BreweryResolver,
-        BrewerySubFieldsResolver,
-        AuthResolver,
-      ],
-      orphanedTypes: [Brewery],
+      resolvers,
     });
 
     const server = new ApolloServer({
       schema,
-      dataSources: () => ({
+      dataSources: (): DataSources<IDataSources> => ({
         breweryAPI: new BreweryAPI(),
         userAPI: new UserAPI(),
       }),
-      context: ({ req, res }) => {
+      context: async ({ req, res }: Context) => {
         return { req, res };
       },
     });

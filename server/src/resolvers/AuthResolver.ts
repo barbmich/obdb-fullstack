@@ -2,13 +2,15 @@ import { createAccessToken, createRefreshToken } from "../utils/auth";
 import { Args, Ctx, Mutation, Resolver } from "type-graphql";
 import { ILoginArgs, IRegisterArgs } from "../types/IArg";
 import { Ijwt } from "../types/Ijwt";
+import { Response } from "express";
+import { IDataSources } from "src/types/IDataSources";
 
 @Resolver()
 export class AuthResolver {
   @Mutation(() => Ijwt, { nullable: true })
   async register(
     @Args() { name, email, password }: IRegisterArgs,
-    @Ctx() { res, dataSources }: any
+    @Ctx() { res, dataSources }: { res: Response; dataSources: IDataSources }
   ): Promise<Ijwt> {
     await dataSources.userAPI.register({
       name,
@@ -24,9 +26,9 @@ export class AuthResolver {
   @Mutation(() => Ijwt, { nullable: true })
   async login(
     @Args() { email, password }: ILoginArgs,
-    @Ctx() { res, dataSources }: any
+    @Ctx() { res, dataSources }: { res: Response; dataSources: IDataSources }
   ): Promise<Ijwt> {
-    const user = dataSources.userAPI.login({ email, password });
+    const user = await dataSources.userAPI.login({ email, password });
     res.cookie("refresh-token", createRefreshToken(user), {
       httpOnly: true,
     });

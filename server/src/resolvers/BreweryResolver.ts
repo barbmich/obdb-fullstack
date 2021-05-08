@@ -8,13 +8,14 @@ import {
   Resolver,
   Root,
 } from "type-graphql";
+import { Context } from "src/types/Context";
 
 @Resolver()
 export class BreweryResolver {
   @Query(() => [Brewery])
   async getAllBreweries(
     @Ctx()
-    { dataSources }: any
+    { dataSources }: Context
   ) {
     const allBreweries = await dataSources.breweryAPI.getAllBreweries();
     return allBreweries;
@@ -25,7 +26,7 @@ export class BreweryResolver {
     @Arg("id", () => Int)
     id: number,
     @Ctx()
-    { dataSources }: any
+    { dataSources }: Context
   ) {
     const brewery = await dataSources.breweryAPI.getSingleBrewery({ id });
     return brewery;

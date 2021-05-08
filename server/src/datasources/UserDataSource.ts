@@ -2,7 +2,7 @@ import { DataSource } from "apollo-datasource";
 import { ApolloError } from "apollo-server-core";
 import { compare, hash } from "bcryptjs";
 import { User } from "../entity/User";
-import { ILoginArgs, IRegisterArgs } from "src/types/IArg";
+import { IArgId, ILoginArgs, IRegisterArgs } from "src/types/IArg";
 import { Like } from "../entity/Like";
 
 export class UserAPI extends DataSource {
@@ -28,7 +28,7 @@ export class UserAPI extends DataSource {
     return user;
   }
 
-  async getUserLikes({ id }: { id: number }): Promise<Like[]> {
+  async getUserLikes({ id }: IArgId): Promise<Like[]> {
     return Like.find({ where: { user: id } });
   }
 }
