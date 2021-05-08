@@ -31,4 +31,37 @@ export class UserAPI extends DataSource {
   async getUserLikes({ id }: IArgId): Promise<Like[]> {
     return Like.find({ where: { user: id } });
   }
+
+  async addLike({
+    id,
+    brewery_id,
+  }: {
+    id: number;
+    brewery_id: number;
+  }): Promise<Boolean> {
+    const user = await User.findOne(id);
+    if (!user) throw new ApolloError("no user found");
+    const isLiked = await Like.find({ where: { user: user, brewery_id } });
+    if (isLiked.length) return true;
+    const like = Like.create();
+    like.user = user;
+    like.brewery_id = brewery_id;
+    await like.save();
+    return true;
+  }
+
+  async removeLike({
+    id,
+    brewery_id,
+  }: {
+    id: number;
+    brewery_id: number;
+  }): Promise<Boolean> {
+    const user = await User.findOne(id);
+    if (!user) throw new ApolloError("no user found");
+    const isLiked = await Like.find({ where: { user: user, brewery_id } });
+    if (!isLiked.length) return true;
+    await Like.remove(isLiked);
+    return true;
+  }
 }

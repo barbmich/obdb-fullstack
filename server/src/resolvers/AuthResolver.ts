@@ -4,9 +4,19 @@ import { ILoginArgs, IRegisterArgs } from "../types/IArg";
 import { Ijwt } from "../types/Ijwt";
 import { Response } from "express";
 import { IDataSources } from "src/types/IDataSources";
+import { User } from "src/entity/User";
 
 @Resolver()
 export class AuthResolver {
+  private async createTokens({ user, res }: { user: User; res: Response }) {
+    res.cookie("refresh-token", createRefreshToken(user), {
+      httpOnly: true,
+    });
+    return {
+      accessToken: createAccessToken(user),
+    };
+  }
+
   @Mutation(() => Ijwt, { nullable: true })
   async register(
     @Args() { name, email, password }: IRegisterArgs,
@@ -20,7 +30,8 @@ export class AuthResolver {
     // i don't like this passing context around but currently it's needed to avoid code repetition.
     // try to find a better solution (service + repository ?
     // cons of this is: is this really needed in a small app like this one?)
-    return this.login({ email, password }, { res, dataSources });
+    const user = await dataSources.userAPI.login({ email, password });
+    return this.createTokens({ user, res });
   }
 
   @Mutation(() => Ijwt, { nullable: true })
@@ -29,11 +40,6 @@ export class AuthResolver {
     @Ctx() { res, dataSources }: { res: Response; dataSources: IDataSources }
   ): Promise<Ijwt> {
     const user = await dataSources.userAPI.login({ email, password });
-    res.cookie("refresh-token", createRefreshToken(user), {
-      httpOnly: true,
-    });
-    return {
-      accessToken: createAccessToken(user),
-    };
+    return this.createTokens({ user, res });
   }
 }

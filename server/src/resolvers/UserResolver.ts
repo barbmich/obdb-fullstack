@@ -4,13 +4,16 @@ import {
   Ctx,
   FieldResolver,
   Int,
+  Mutation,
   Query,
   Resolver,
   Root,
+  UseMiddleware,
 } from "type-graphql";
 import { Brewery } from "src/types/Brewery";
-import { Like } from "src/entity/Like";
+import { Like } from "../entity/Like";
 import { Context } from "src/types/Context";
+import { isAuth } from "../utils/auth";
 
 @Resolver()
 export class UserResolver {
@@ -27,12 +30,24 @@ export class UserResolver {
     return User.find();
   }
 
-  @Query(() => User, { nullable: true })
-  async userByEmail(
-    @Arg("email")
-    email: string
-  ): Promise<User | undefined> {
-    return User.findOne({ email });
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async addLike(
+    @Arg("brewery_id", () => Int) brewery_id: number,
+    @Ctx() { dataSources, payload }: Context
+  ) {
+    const userId = Number(payload!.userId);
+    return dataSources.userAPI.addLike({ id: userId, brewery_id });
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async removeLike(
+    @Arg("brewery_id", () => Int) brewery_id: number,
+    @Ctx() { dataSources, payload }: Context
+  ) {
+    const userId = Number(payload!.userId);
+    return dataSources.userAPI.removeLike({ id: userId, brewery_id });
   }
 }
 
