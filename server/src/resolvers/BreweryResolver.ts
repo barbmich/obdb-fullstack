@@ -8,7 +8,6 @@ import {
   Resolver,
   Root,
 } from "type-graphql";
-import { ITransformedBrewery } from "src/types/ITransformedBrewery";
 
 @Resolver()
 export class BreweryResolver {
@@ -36,29 +35,17 @@ export class BreweryResolver {
 @Resolver(() => Brewery)
 export class BrewerySubFieldsResolver {
   @FieldResolver()
-  address(@Root() brewery: ITransformedBrewery): Address {
-    return {
-      street: brewery.street,
-      city: brewery.city,
-      state: brewery.state,
-      postalCode: brewery.postalCode,
-      country: brewery.country,
-    };
+  address(@Root() brewery: Brewery): Address {
+    return brewery.address;
   }
 
   @FieldResolver()
-  coordinates(@Root() brewery: ITransformedBrewery): Coordinates {
-    return {
-      longitude: brewery.longitude,
-      latitude: brewery.latitude,
-    };
+  coordinates(@Root() brewery: Brewery): Coordinates {
+    return brewery.coordinates;
   }
 
   @FieldResolver()
-  contacts(@Root() brewery: ITransformedBrewery): Contacts {
-    return {
-      phone: brewery.phone,
-      website: brewery.website,
-    };
+  contacts(@Root() brewery: Brewery): Contacts {
+    return brewery.contacts;
   }
 }

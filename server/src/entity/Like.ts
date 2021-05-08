@@ -1,3 +1,4 @@
+import { ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -8,6 +9,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 
+@ObjectType()
 @Entity()
 export class Like extends BaseEntity {
   @PrimaryGeneratedColumn()

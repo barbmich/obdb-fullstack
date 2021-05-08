@@ -1,14 +1,16 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server";
 import { buildSchema } from "type-graphql";
-import { UserResolver } from "./resolvers/UserResolver";
+import { UserResolver, UserSubFieldsResolver } from "./resolvers/UserResolver";
 import { createConnection, getConnectionOptions } from "typeorm";
 import { Brewery } from "./types/Brewery";
 import {
   BreweryResolver,
   BrewerySubFieldsResolver,
 } from "./resolvers/BreweryResolver";
-import { BreweryAPI } from "./datasources/Brewery";
+import { BreweryAPI } from "./datasources/BreweryDataSource";
+import { UserAPI } from "./datasources/UserDataSource";
+import { AuthResolver } from "./resolvers/AuthResolver";
 
 async function bootstrap() {
   try {
@@ -16,7 +18,13 @@ async function bootstrap() {
     await createConnection({ ...options, name: "default" });
 
     const schema = await buildSchema({
-      resolvers: [UserResolver, BreweryResolver, BrewerySubFieldsResolver],
+      resolvers: [
+        UserResolver,
+        UserSubFieldsResolver,
+        BreweryResolver,
+        BrewerySubFieldsResolver,
+        AuthResolver,
+      ],
       orphanedTypes: [Brewery],
     });
 
@@ -24,7 +32,11 @@ async function bootstrap() {
       schema,
       dataSources: () => ({
         breweryAPI: new BreweryAPI(),
+        userAPI: new UserAPI(),
       }),
+      context: ({ req, res }) => {
+        return { req, res };
+      },
     });
 
     const { url } = await server.listen();

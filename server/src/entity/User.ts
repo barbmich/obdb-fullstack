@@ -1,3 +1,4 @@
+import { Brewery } from "../types/Brewery";
 import { Field, ID, ObjectType } from "type-graphql";
 import {
   BaseEntity,
@@ -24,8 +25,9 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  password?: string;
+  password: string;
 
+  @Field(() => [Brewery], { nullable: true })
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
 }
