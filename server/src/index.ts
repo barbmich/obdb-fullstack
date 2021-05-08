@@ -45,7 +45,7 @@ async function bootstrap() {
 
     const port = 4000;
     app.listen(port, () => {
-      console.log(`Playground available at http://localhost:${port}`);
+      console.log(`🚀 playground available at http://localhost:${port}`);
     });
   } catch (error) {
     console.log(error);
