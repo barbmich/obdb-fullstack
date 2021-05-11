@@ -2,6 +2,8 @@ import { RESTDataSource } from "apollo-datasource-rest";
 import { Brewery } from "../types/Brewery";
 import { IArgId, IArgIds } from "src/types/IArg";
 import { IFetchedBrewery } from "src/types/IFetchedBrewery";
+import { Like } from "../entity/Like";
+import { ApolloError } from "apollo-server-errors";
 
 export class BreweryAPI extends RESTDataSource {
   constructor() {
@@ -16,19 +18,32 @@ export class BreweryAPI extends RESTDataSource {
   }
 
   async getSingleBrewery({ id }: IArgId): Promise<Brewery> {
-    const res = await this.get(`breweries/${id}`);
+    let res = null;
+    try {
+      res = await this.get(`breweries/${id}`);
+    } catch (error) {
+      throw new ApolloError(error.extensions.response.body.message);
+    }
     return this.breweryReducer(res);
   }
 
   async getBreweriesByIds({ ids }: IArgIds): Promise<Brewery[]> {
-    const res = await Promise.all(
+    const breweries = await Promise.allSettled(
       ids.map((id) => this.getSingleBrewery({ id }))
     );
-    return res;
+    const filteredBreweries = breweries
+      .filter((id) => id.status === "fulfilled")
+      .map((id: any) => id.value) as Brewery[];
+    return filteredBreweries;
+  }
+
+  async getBreweryLikes({ id }: IArgId): Promise<number> {
+    return Like.count({ where: { brewery_id: id } });
   }
 
   // eases testing and refactors keys to pascalCase
-  breweryReducer(brewery: IFetchedBrewery): Brewery {
+  async breweryReducer(brewery: IFetchedBrewery): Promise<Brewery> {
+    const likes = await this.getBreweryLikes({ id: brewery.id });
     return {
       id: brewery.id,
       name: brewery.name,
@@ -48,6 +63,7 @@ export class BreweryAPI extends RESTDataSource {
         phone: brewery.phone,
         website: brewery.website_url,
       },
+      likes,
     };
   }
 }

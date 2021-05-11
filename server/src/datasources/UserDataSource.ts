@@ -4,6 +4,7 @@ import { compare, hash } from "bcryptjs";
 import { User } from "../entity/User";
 import { IArgId, ILoginArgs, IRegisterArgs } from "src/types/IArg";
 import { Like } from "../entity/Like";
+import { getConnection } from "typeorm";
 
 export class UserAPI extends DataSource {
   async register({ name, email, password }: IRegisterArgs): Promise<User> {
@@ -26,6 +27,13 @@ export class UserAPI extends DataSource {
       throw new ApolloError("Invalid credentials");
     }
     return user;
+  }
+
+  async revokeRefreshTokenForUser({ id }: IArgId): Promise<Boolean> {
+    await getConnection()
+      .getRepository(User)
+      .increment({ id }, "tokenVersion", 1);
+    return true;
   }
 
   async getUserLikes({ id }: IArgId): Promise<Like[]> {

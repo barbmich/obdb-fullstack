@@ -30,4 +30,7 @@ export class User extends BaseEntity {
   @Field(() => [Brewery], { nullable: true })
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];
+
+  @Column("int", { default: 0 })
+  tokenVersion: number;
 }

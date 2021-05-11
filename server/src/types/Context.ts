@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { IDataSources } from "./IDataSources";
 
-export interface ExpressContext {
+interface ExpressContext {
   req: Request;
   res: Response;
 }
 
-export interface Context extends ExpressContext {
+export interface MyContext extends ExpressContext {
   dataSources: IDataSources;
-  payload?: { userId: string | number };
+  payload: { userId: number };
 }

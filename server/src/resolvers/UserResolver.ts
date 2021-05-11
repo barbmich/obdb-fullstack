@@ -12,7 +12,7 @@ import {
 } from "type-graphql";
 import { Brewery } from "src/types/Brewery";
 import { Like } from "../entity/Like";
-import { Context } from "src/types/Context";
+import { MyContext } from "src/types/Context";
 import { isAuth } from "../utils/auth";
 
 @Resolver()
@@ -34,7 +34,7 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async addLike(
     @Arg("brewery_id", () => Int) brewery_id: number,
-    @Ctx() { dataSources, payload }: Context
+    @Ctx() { dataSources, payload }: MyContext
   ) {
     const userId = Number(payload!.userId);
     return dataSources.userAPI.addLike({ id: userId, brewery_id });
@@ -44,7 +44,7 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async removeLike(
     @Arg("brewery_id", () => Int) brewery_id: number,
-    @Ctx() { dataSources, payload }: Context
+    @Ctx() { dataSources, payload }: MyContext
   ) {
     const userId = Number(payload!.userId);
     return dataSources.userAPI.removeLike({ id: userId, brewery_id });
@@ -56,7 +56,7 @@ export class UserSubFieldsResolver {
   @FieldResolver()
   async likes(
     @Root() user: User,
-    @Ctx() { dataSources }: Context
+    @Ctx() { dataSources }: MyContext
   ): Promise<Brewery[]> {
     const likes = await dataSources.userAPI.getUserLikes({ id: user.id });
     const ids = likes.map((like: Like) => like.brewery_id);

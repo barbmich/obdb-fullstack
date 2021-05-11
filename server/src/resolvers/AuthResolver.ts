@@ -1,19 +1,18 @@
-import { createAccessToken, createRefreshToken } from "../utils/auth";
-import { Args, Ctx, Mutation, Resolver } from "type-graphql";
+import { sendRefreshTokenCookie, createAccessToken } from "../utils/auth";
+import { Arg, Args, Ctx, Int, Mutation, Resolver } from "type-graphql";
 import { ILoginArgs, IRegisterArgs } from "../types/IArg";
 import { Ijwt } from "../types/Ijwt";
 import { Response } from "express";
 import { IDataSources } from "src/types/IDataSources";
 import { User } from "src/entity/User";
+import { MyContext } from "../types/Context";
 
 @Resolver()
 export class AuthResolver {
   private async createTokens({ user, res }: { user: User; res: Response }) {
-    res.cookie("refresh-token", createRefreshToken(user), {
-      httpOnly: true,
-    });
+    sendRefreshTokenCookie(res, user);
     return {
-      accessToken: createAccessToken(user),
+      accessToken: `${createAccessToken(user)}`,
     };
   }
 
@@ -41,5 +40,14 @@ export class AuthResolver {
   ): Promise<Ijwt> {
     const user = await dataSources.userAPI.login({ email, password });
     return this.createTokens({ user, res });
+  }
+
+  @Mutation(() => Boolean)
+  async revokeRefreshTokenForUser(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { dataSources }: MyContext
+  ): Promise<Boolean> {
+    await dataSources.userAPI.revokeRefreshTokenForUser({ id });
+    return true;
   }
 }
