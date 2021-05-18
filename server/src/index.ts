@@ -1,7 +1,6 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { createConnection, getConnectionOptions } from "typeorm";
 import { BreweryAPI } from "./datasources/BreweryDataSource";
 import { UserAPI } from "./datasources/UserDataSource";
 import { resolvers } from "./resolvers/resolvers";
@@ -18,18 +17,14 @@ import {
 } from "./utils/auth";
 import { REFRESH_TOKEN_COOKIE_NAME } from "./constants/constants";
 import { IRefreshTokenPayload } from "./types/IPayloads";
+import { dbConnection } from "./database/dbConnect";
 
 async function bootstrap() {
   try {
     const app = express();
     app.use(cookieParser());
 
-    const options = await getConnectionOptions("development");
-
-    await createConnection({
-      ...options,
-      name: "default",
-    });
+    await dbConnection();
 
     app.get("/", (_req, res) => res.send("hello"));
     app.post("/refresh_token", async (req, res) => {
@@ -59,6 +54,7 @@ async function bootstrap() {
 
     const schema = await buildSchema({
       resolvers,
+      orphanedTypes: [],
     });
 
     const dataSources = (): DataSources<IDataSources> => ({
@@ -71,6 +67,7 @@ async function bootstrap() {
     };
 
     const apolloServer = new ApolloServer({
+      apollo: { key: process.env.APOLLO_KEY },
       schema,
       dataSources,
       context,
@@ -80,7 +77,9 @@ async function bootstrap() {
 
     const port = 4000;
     app.listen(port, () => {
-      console.log(`🚀 playground available at http://localhost:${port}`);
+      console.log(
+        `🚀 playground available at http://localhost:${port}/graphql`
+      );
     });
   } catch (error) {
     console.log(error);

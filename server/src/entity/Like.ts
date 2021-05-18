@@ -21,4 +21,10 @@ export class Like extends BaseEntity {
 
   @Column()
   brewery_id: number;
+
+  @Column({ default: false })
+  like: boolean;
+
+  @Column({ nullable: true, default: null })
+  stars: number;
 }

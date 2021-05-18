@@ -1,5 +1,5 @@
 import { Brewery } from "../types/Brewery";
-import { Field, ID, ObjectType } from "type-graphql";
+import { Ctx, Field, ID, ObjectType, Root } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Like } from "./Like";
+import { MyContext } from "src/types/Context";
 
 @ObjectType()
 @Entity()
@@ -24,12 +25,19 @@ export class User extends BaseEntity {
   @Column("text", { unique: true })
   email: string;
 
-  @Column()
-  password: string;
-
   @Field(() => [Brewery], { nullable: true })
   @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  async favorites(
+    @Root() user: User,
+    @Ctx() { dataSources }: MyContext
+  ): Promise<Brewery[]> {
+    const likes = await dataSources.userAPI.getUserLikes({ id: user.id });
+    const ids = likes.map((like: Like) => like.brewery_id);
+    return dataSources.breweryAPI.getBreweriesByIds({ ids });
+  }
+
+  @Column()
+  password: string;
 
   @Column("int", { default: 0 })
   tokenVersion: number;

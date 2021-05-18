@@ -1,5 +1,6 @@
 export interface IFetchedBrewery {
   id: number;
+  obdb_id: string;
   name: string;
   brewery_type: string;
   street: string;

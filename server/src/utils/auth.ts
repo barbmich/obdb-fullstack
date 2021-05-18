@@ -9,7 +9,7 @@ import { IAccessTokenPayload } from "src/types/IPayloads";
 
 export const createAccessToken = (user: User) => {
   return sign({ userId: user.id }, process.env.JWT_SECRET_ACCESS_TOKEN!, {
-    expiresIn: "10m",
+    expiresIn: "1d",
   });
 };
 
@@ -29,8 +29,11 @@ export const sendRefreshTokenCookie = (res: Response, user: User) => {
   });
 };
 
-export const sendEmptyAccessToken = (res: Response, message: string) =>
-  res.send({ ok: false, accessToken: "", message });
+export const sendEmptyAccessToken = (
+  res: Response,
+  message: string = "",
+  ok: boolean = false
+) => res.send({ ok, accessToken: "", message });
 
 export const removeRefreshToken = (res: Response) =>
   res.clearCookie(REFRESH_TOKEN_COOKIE_NAME);

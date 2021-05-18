@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from "type-graphql";
+import { Field, Float, ID, Int, ObjectType } from "type-graphql";
 
 @ObjectType()
 export class Address {
@@ -42,6 +42,9 @@ export class Brewery {
   id: number;
 
   @Field()
+  slug: string;
+
+  @Field()
   name: string;
 
   @Field({ nullable: true })
@@ -58,4 +61,7 @@ export class Brewery {
 
   @Field(() => Int)
   likes: number;
+
+  @Field(() => Float, { nullable: true })
+  stars: number | undefined;
 }

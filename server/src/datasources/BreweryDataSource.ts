@@ -1,10 +1,9 @@
 import { RESTDataSource } from "apollo-datasource-rest";
 import { Brewery } from "../types/Brewery";
-import { IArgId, IArgIds } from "src/types/IArg";
+import { IArgId, IArgIds } from "src/types/IArgTypes";
 import { IFetchedBrewery } from "src/types/IFetchedBrewery";
 import { Like } from "../entity/Like";
 import { ApolloError } from "apollo-server-errors";
-
 export class BreweryAPI extends RESTDataSource {
   constructor() {
     super();
@@ -41,11 +40,27 @@ export class BreweryAPI extends RESTDataSource {
     return Like.count({ where: { brewery_id: id } });
   }
 
+  async getBreweryStars({ id }: IArgId): Promise<number | undefined> {
+    const starsList = await Like.createQueryBuilder()
+      .where("brewery_id = :id", { id })
+      .getMany();
+    const notNullStarsListLength = starsList.filter(
+      (id) => id.stars !== null
+    ).length;
+    if (!notNullStarsListLength) return undefined;
+    const average =
+      starsList.map((id) => id.stars).reduce((acc, curr) => acc + curr) /
+      notNullStarsListLength;
+    return Number(average.toFixed(2));
+  }
+
   // eases testing and refactors keys to pascalCase
   async breweryReducer(brewery: IFetchedBrewery): Promise<Brewery> {
     const likes = await this.getBreweryLikes({ id: brewery.id });
+    const stars = await this.getBreweryStars({ id: brewery.id });
     return {
       id: brewery.id,
+      slug: brewery.obdb_id,
       name: brewery.name,
       breweryType: brewery.brewery_type,
       address: {
@@ -64,6 +79,7 @@ export class BreweryAPI extends RESTDataSource {
         website: brewery.website_url,
       },
       likes,
+      stars,
     };
   }
 }

@@ -1,6 +1,10 @@
-import { sendRefreshTokenCookie, createAccessToken } from "../utils/auth";
+import {
+  sendRefreshTokenCookie,
+  createAccessToken,
+  removeRefreshToken,
+} from "../utils/auth";
 import { Arg, Args, Ctx, Int, Mutation, Resolver } from "type-graphql";
-import { ILoginArgs, IRegisterArgs } from "../types/IArg";
+import { ILoginArgs, IRegisterArgs } from "../types/IArgTypes";
 import { Ijwt } from "../types/Ijwt";
 import { Response } from "express";
 import { IDataSources } from "src/types/IDataSources";
@@ -31,6 +35,14 @@ export class AuthResolver {
     // cons of this is: is this really needed in a small app like this one?)
     const user = await dataSources.userAPI.login({ email, password });
     return this.createTokens({ user, res });
+  }
+
+  @Mutation(() => Ijwt, { nullable: true })
+  async logout(@Ctx() { res }: { res: Response }): Promise<Ijwt> {
+    removeRefreshToken(res);
+    return {
+      accessToken: "",
+    };
   }
 
   @Mutation(() => Ijwt, { nullable: true })

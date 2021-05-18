@@ -1,4 +1,4 @@
-import { ArgsType, Field } from "type-graphql";
+import { ArgsType, Field, Int } from "type-graphql";
 
 export interface IArgId {
   id: number;
@@ -27,4 +27,10 @@ export class ILoginArgs {
 
   @Field(() => String)
   password: string;
+}
+
+@ArgsType()
+export class IStars {
+  @Field(() => Int)
+  stars: number;
 }
