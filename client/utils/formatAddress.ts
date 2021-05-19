@@ -4,8 +4,11 @@ interface IArgsAddress {
   postalCode: string;
 }
 
-export const formatAddress = ({ city, state, postalCode }: IArgsAddress) => {
-  const addressString = [city, state, postalCode]
+export const formatAddress = (
+  { city, state, postalCode }: IArgsAddress,
+  preview = false
+) => {
+  const addressString = [city, state, preview ? null : postalCode]
     .filter((value) => value !== null)
     .join(", ");
   return addressString ? addressString : null;

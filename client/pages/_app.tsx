@@ -1,8 +1,13 @@
 import { AppProps } from "next/dist/next-server/lib/router/router";
-import "../styles/globals.css";
+import { Layout } from "../layout/Layout";
+import "../styles/globals.scss";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <Layout>
+      <Component {...pageProps} />
+    </Layout>
+  );
 }
 
 export default MyApp;

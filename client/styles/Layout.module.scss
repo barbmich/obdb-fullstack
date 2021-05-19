@@ -1,0 +1,20 @@
+.nav {
+  display: flex;
+  background-color: var(--primary-color);
+  justify-content: space-between;
+  padding: 12px;
+
+  h1 {
+    color: var(--card-background-color);
+    margin-bottom: 0;
+    margin-left: 10px;
+  }
+}
+
+.main {
+  margin: auto;
+  padding-bottom: 20px;
+  max-width: 1460px;
+  display: flex;
+  flex-direction: column;
+}

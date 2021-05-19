@@ -1,0 +1,45 @@
+.center {
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+}
+
+.button,
+.input {
+  background-color: inherit;
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 1.2rem;
+
+  &__search {
+    margin-right: 10px;
+  }
+
+  &__prev,
+  &__next {
+    width: 200px;
+  }
+
+  &__prev {
+    margin-right: 10px;
+  }
+}
+
+.input {
+  margin-right: 10px;
+}
+
+.button.clear.disabled {
+  display: none;
+}
+
+.input {
+  color: var(--primary-color);
+}
+
+/* required to use !important to overwrite React Semantic UI css */
+.ui.button {
+  margin: 0px !important;
+}
